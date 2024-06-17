@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GIF to AVIF Converter</title>
+</head>
+<body>
+    <h1>Upload a GIF to Convert to AVIF</h1>
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="gifFile" name="gifFile" accept="image/gif" required>
+        <button type="submit">Upload and Convert</button>
+    </form>
+    <h2>Converted AVIF Image:</h2>
+    <img id="avifImage" style="display: none;">
+
+    <script>
+        document.getElementById('uploadForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const formData = new FormData();
+            const fileField = document.querySelector('input[type="file"]');
+
+            formData.append('file', fileField.files[0]);
+
+            const response = await fetch('http://127.0.0.1:5000/convert', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                const blob = await response.blob();
+                const avifImage = document.getElementById('avifImage');
+                avifImage.src = URL.createObjectURL(blob);
+                avifImage.style.display = 'block';
+            } else {
+                alert('Failed to convert image');
+            }
+        });
+    </script>
+</body>
+</html>
